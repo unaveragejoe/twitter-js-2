@@ -6,8 +6,24 @@ var router = express.Router();
 var tweetBank = require('../tweetBank');
 
 router.get('/', function(req, res, next){
-    var tweets = tweetBank.list();
-    res.render('index', { title: 'Twitter!', tweets: tweets });
+    var allTweets = tweetBank.list();
+    res.render('index', { title: 'Twitter!', tweets: allTweets , showForm: true});
+});
+
+router.get('/users/:name', function(req, res, next){
+    var tweetsForName = tweetBank.find({ name: req.params.name});
+    res.render('index', { title: 'Twitter!', tweets: tweetsForName, showForm: true, name: req.params.name });
+
+});
+
+router.get('/tweets/:id', function(req, res, next){
+    var tweetsWithThatId = tweetBank.find({ id: Number(req.params.id) });
+    res.render('index', { title: 'Twitter!', tweets: tweetsWithThatId });
+});
+
+router.post('/tweets',  function(req, res, next){
+    tweetBank.add(req.body.name, req.body.text);
+    res.redirect('/');
 });
 
 // router.get('/stylesheets/style.css', function(req, res, next){

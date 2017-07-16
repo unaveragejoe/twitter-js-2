@@ -6,6 +6,7 @@ var routes = require('./routes'); // looking for an index.js file
 var fs = require('fs');
 var path = require('path');
 var mime = require('mime');
+var bodyParser = require('body-parser');
 
 var locals = {
     title: 'Some Tile',
@@ -26,6 +27,9 @@ app.engine('html', nunjucks.render);
 app.use(morgan('dev'));
 
 app.use(express.static(__dirname + '/public'));
+
+app.use(bodyParser.urlencoded({ entended: true})); // for standard HTML form submits
+app.use(bodyParser.json()); // would be for AJAX requests
 
 // app.use(function(req, res, next){
 //     var mimeType = mime.lookup(req.path);
