@@ -2,6 +2,10 @@ var express = require('express');
 var app = express();
 var morgan = require('morgan');
 var nunjucks = require('nunjucks');
+var routes = require('./routes'); // looking for an index.js file
+var fs = require('fs');
+var path = require('path');
+var mime = require('mime');
 
 var locals = {
     title: 'Some Tile',
@@ -10,10 +14,7 @@ var locals = {
         { name: 'Hermione' }
     ]
 };
-// nunjucks.render(__dirname + '/views/index.html', locals, function(err, output){
-//     if (err) return console.error(err);
-//     console.log(output);
-// });
+
 
 nunjucks.configure('views', { noCache: true });
 app.set('view engine', 'html');
@@ -24,13 +25,18 @@ app.engine('html', nunjucks.render);
 
 app.use(morgan('dev'));
 
-app.get('/', function(req, res){
-    res.render('index', locals);
-});
+app.use(express.static(__dirname + '/public'));
 
-app.get('/news', function(req, res, next){
-    res.json({name: 'newsRoute', data: 12345});
-});
+// app.use(function(req, res, next){
+//     var mimeType = mime.lookup(req.path);
+//     fs.readFile('./public' + req.path, function(err, fileBuffer){
+//         if (err) return next();
+//         res.header('Content-Type', mimeType);
+//         res.send(fileBuffer);
+//     });
+// });
+
+app.use('/', routes); // '/' not necessary, but there for specificity
 
 app.listen(1337, function(){
     console.log('listening on port 1337');
